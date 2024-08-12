@@ -1258,12 +1258,19 @@ class Filesystem:
 class Mount:
     path: str
     device: Filesystem = attributes.ref(backlink="_mount", default=None)
+    _fstype: Optional[str] = None
     options: Optional[str] = None
     spec: Optional[str] = None
 
     @property
     def fstype(self):
-        return self.device.fstype
+        if self.device is not None:
+            return self.device.fstype
+        return self._fstype
+
+    @fstype.setter
+    def fstype(self, value):
+        self._fstype = value
 
     def can_delete(self):
         from subiquity.common.filesystem import boot
